@@ -1,0 +1,16 @@
+# يمنع أي شخص من فتح config.php مباشرة عبر الرابط
+# إصلاح: الصيغة القديمة "Order Allow,Deny / Deny from all" هي صيغة
+# Apache 2.2 القديمة. على خوادم Apache 2.4 الحديثة (بدون مكوّن
+# mod_access_compat) هذه الصيغة تسبب خطأ 500 Internal Server Error
+# على كامل المجلد، مما يمنع تحميل index.html و style.css و app.js
+# وحتى استدعاء api/chat.php نفسه. الحل: كتابة القاعدة بالصيغتين معًا
+# باستخدام <IfModule> بحيث تعمل على أي إصدار من Apache.
+<Files "config.php">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Deny from all
+    </IfModule>
+</Files>
